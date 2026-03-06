@@ -1,0 +1,1 @@
+sudo docker run --restart=unless-stopped --name openspeedtest -d -p 5656:3000 -p 5757:3001 openspeedtest/latest

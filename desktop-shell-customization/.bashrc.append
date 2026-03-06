@@ -1,0 +1,54 @@
+# use to append to .bashrc not to replace entire .bashrc file
+
+# common startup scripts
+source ~/.shrc
+
+# rust
+. "$HOME/.cargo/env"
+
+# quick launch incus container shell
+startc() {
+  container="$1"
+  if [ -z "$container" ]; then
+    echo "Usage: startc <container-name>"
+    return 1
+  fi
+
+  status=$(incus list --format csv -c ns | grep "^$container," | cut -d',' -f2)
+
+  if [ "$status" = "STOPPED" ]; then
+    echo "Starting container $container..."
+    incus start "$container"
+  else
+    echo "Container $container is already running."
+  fi
+
+  incus exec "$container" -- /bin/bash
+  echo "Exiting container shell, stopping $container..."
+  incus stop "$container"
+}
+
+# change prompt
+chprom() {
+	source ~/sh-script/bash-chprom
+}
+
+# Start Oh My Posh Random Theme
+POSH_THEME_DIR="$HOME/posh-theme"
+
+themes=("$POSH_THEME_DIR"/*.omp.json)
+
+# not really random (more like seed for random), but not repetitive like RANDOM with modulo bias
+# modulo bias learn more: https://research.kudelskisecurity.com/2020/07/28/the-definitive-guide-to-modulo-bias-and-how-to-avoid-it/
+my_random=$(( ( $(date +%s%N) ^ $$ ) & 0x7FFF ))
+
+if [ ${#themes[@]} -gt 0 ]; then
+  num_themes=${#themes[@]}
+  rand_idx=$((my_random % num_themes))
+  random_theme="${themes[$rand_idx]}"
+  eval "$(oh-my-posh init bash --config "$random_theme")"
+else
+  echo "No Oh My Posh themes found in $POSH_THEME_DIR. Using default theme." >/dev/stderr
+  eval "$(oh-my-posh init bash)"
+fi
+# End Oh My Posh Random Theme

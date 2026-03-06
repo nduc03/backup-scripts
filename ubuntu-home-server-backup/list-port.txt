@@ -1,0 +1,9 @@
+filebrowser:9000
+cockpit:9090
+redmine:6767 (docker)
+it-tools:8888 (docker)
+gitea:3000 (docker)
+n8n:5678 (docker)
+r2jwt-auth:8080
+wiki.js:8765 (docker)
+pihole web: http://pi.hole:8484, https://pi.hole:8483

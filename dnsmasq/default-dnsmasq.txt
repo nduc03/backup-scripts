@@ -1,0 +1,9 @@
+# /etc/default/dnsmasq
+
+CONFIG_DIR=/etc/dnsmasq.d,.dpkg-dist,.dpkg-old,.dpkg-new
+
+# by default, the line below is commented, please uncomment it
+IGNORE_RESOLVCONF=yes
+
+# by default, the line below is commented, please uncomment it
+DNSMASQ_EXCEPT="lo"

@@ -1,0 +1,14 @@
+[Unit]
+Description=File Browser Service
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/filebrowser -a 0.0.0.0 -p 9000 -r /
+Restart=always
+User=root
+Group=root
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,21 @@
+# used for appending to ~/.config/fish/config.fish not to replace it
+
+#! my custom path (does not work)
+# source ~/.user-env
+# TODO find alternative way to include variables
+
+# --- Start Oh My Posh Random Theme ---
+set POSH_THEME_DIR "$HOME/posh-theme"
+set themes (find "$POSH_THEME_DIR" -maxdepth 1 \( -iname "*.omp.json" -o -iname "*.json" -o -iname "*.yaml" -o -iname "*.toml" \) -print0 2>/dev/null | string split0)
+
+if count $themes > 0
+  set num_themes (count $themes)
+  set rand_idx (random 1 $num_themes) # Fish uses 1-based indexing
+  set random_theme $themes[$rand_idx]
+
+  oh-my-posh init fish --config "$random_theme" | source
+else
+  echo "No Oh My Posh themes found in $POSH_THEME_DIR. Using default theme." >/dev/stderr
+  oh-my-posh init fish | source
+end
+# --- End Oh My Posh Random Theme ---

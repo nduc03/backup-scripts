@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Prompt user for the username part
+read -p "Enter the username part for the prompt: " user_part
+
+# Prompt user for the path part
+read -p "Enter the path part for the prompt: " path_part
+
+# Check if the current user is root
+if [ "$(whoami)" = "root" ]; then
+    prompt_symbol="#"
+else
+    prompt_symbol="\$"
+fi
+
+# Construct the temporary PS1 string
+export PS1="\[\e[1;32m\]${user_part}\[\e[0m\]:\[\e[1;34m\]${path_part}\[\e[0m\]${prompt_symbol} "
