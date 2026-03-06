@@ -47,6 +47,7 @@ SERVICE_DATA_DIR="$HOME/container-data/$SERVICE_NAME"
 # get host's default ipv4 address
 __default_iface=$(ip route | grep default | head -n1 | awk '{print $5}')
 HOST_IPV4=$(ip -4 addr show "$__default_iface" | grep -oP '(?<=inet\s)\d+(\.\d+){3}' | head -n1)
+HOST_ULA_IPV6=$(ip -6 addr show "$__default_iface" | grep -oP 'fd00[:0-9a-f]+' | head -n 1)
 
 # define quadlet file paths
 QUADLET_FILENAME="$SERVICE_NAME.$FILE_TYPE"
@@ -71,8 +72,11 @@ if [[ "$USE_TEMPLATE" = "true" ]]; then
   QUADLET_FILE_LOCATION="$TMP_DIR/$QUADLET_FILENAME"
 
   # replace %service_dir% and %host_ipv4% placeholder
-  sed "s|%service_dir%|$SCRIPT_DIR|g; s|%host_ipv4%|$HOST_IPV4|g; s|%service_data_dir%|$SERVICE_DATA_DIR|g;" \
-  "$SCRIPT_DIR/$TEMPLATE_FILENAME" > "$QUADLET_FILE_LOCATION"
+  sed -e "s|%service_dir%|$SCRIPT_DIR|g" \
+    -e "s|%host_ipv4%|$HOST_IPV4|g" \
+    -e "s|%host_ula_ipv6%|\[$HOST_ULA_IPV6\]|g" \
+    -e "s|%service_data_dir%|$SERVICE_DATA_DIR|g" \
+    "$SCRIPT_DIR/$TEMPLATE_FILENAME" > "$QUADLET_FILE_LOCATION"
 
 
   #* process more %variables% or more files here if needed
@@ -93,13 +97,18 @@ if [[ "$ROOTLESS" = "true" ]]; then
     echo "Please run this script without 'sudo'."
     exit 1
   fi
+  INSTALL_LOCATION="$HOME/.config/systemd/user"
   SYSTEMCTL_CMD="systemctl --user"
   SUDO=""
 else
+  INSTALL_LOCATION="/etc/systemd/system"
   SYSTEMCTL_CMD="sudo systemctl"
   SUDO="sudo"
 fi
 echo ">>> Installing $QUADLET_FILENAME"
+
+# due to podman quadlet install bug, we still need to remove the old file before installing the new one
+rm -f "$INSTALL_LOCATION/$SERVICE_NAME.container"
 $SUDO podman quadlet install --replace "$QUADLET_FILE_LOCATION"
 
 #* Uncomment if you have .network and/or .volume files to install

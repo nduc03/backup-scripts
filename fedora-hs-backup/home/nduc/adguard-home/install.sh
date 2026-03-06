@@ -6,6 +6,24 @@
 
 set -e
 
+#* ==========================================
+#* CUSTOMIZABLE VARIABLES
+#* ==========================================
+
+#* Set to false if this container can not run rootless
+ROOTLESS=true
+
+#* Set to false if you are directly using a .container or .quadlets file that don't have .template extension
+USE_TEMPLATE=true
+
+#* Set file extension to "container" for default installation,
+#* or "quadlets" to specify multiple quadlets in one file (only podman v6 above)
+FILE_TYPE="container"
+
+#* ==========================================
+#* END OF CUSTOMIZABLE VARIABLES
+#* ==========================================
+
 # Determine the script's absolute directory
 SCRIPT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 
@@ -24,32 +42,46 @@ SERVICE_NAME=$(printf '%s\n' "$SCRIPT_DIR_NAME" | awk '{
     print g
 }')
 
+SERVICE_DATA_DIR="$HOME/container-data/$SERVICE_NAME"
+
 # get host's default ipv4 address
 __default_iface=$(ip route | grep default | head -n1 | awk '{print $5}')
 HOST_IPV4=$(ip -4 addr show "$__default_iface" | grep -oP '(?<=inet\s)\d+(\.\d+){3}' | head -n1)
+HOST_ULA_IPV6=$(ip -6 addr show | grep -oP 'fd00[:0-9a-f]+' | head -n 1)
 
-TEMPLATE_FILE="$SERVICE_NAME.container.template"
-TARGET_FILE="$SERVICE_NAME.container"
-ROOTLESS=true #* set to true if this container can run rootless
-USE_TEMPLATE=true  #* set to true if using a .container.template file
-INSTALL="cp"
+# define quadlet file paths
+QUADLET_FILENAME="$SERVICE_NAME.$FILE_TYPE"
+QUADLET_FILE_LOCATION="$SCRIPT_DIR/$QUADLET_FILENAME"
 
 echo ">>> Preparing $SERVICE_NAME Quadlet installation..."
 echo "Script directory detected: $SCRIPT_DIR"
 
 # template processing
 if [[ "$USE_TEMPLATE" = "true" ]]; then
+  TEMPLATE_FILENAME="$QUADLET_FILENAME.template"
+
   # Ensure template exists
-  if [[ ! -f "$SCRIPT_DIR/$TEMPLATE_FILE" ]]; then
-    echo "Error: $TEMPLATE_FILE not found in $SCRIPT_DIR."
+  if [[ ! -f "$SCRIPT_DIR/$TEMPLATE_FILENAME" ]]; then
+    echo "Error: $TEMPLATE_FILENAME not found in $SCRIPT_DIR."
     exit 1
   fi
-  INSTALL="mv"
+
+  # make a temporary directory for temporary target file
+  TMP_DIR=$(mktemp -d -t "$SERVICE_NAME-XXXXXXXX")
+  trap "rm -rf $TMP_DIR" EXIT
+  QUADLET_FILE_LOCATION="$TMP_DIR/$QUADLET_FILENAME"
+
   # replace %service_dir% and %host_ipv4% placeholder
-  sed "s|%service_dir%|$SCRIPT_DIR|g; s|%host_ipv4%|$HOST_IPV4|g" "$SCRIPT_DIR/$TEMPLATE_FILE" \
-    > "$SCRIPT_DIR/$TARGET_FILE"
+  sed -e "s|%service_dir%|$SCRIPT_DIR|g" \
+    -e "s|%host_ipv4%|$HOST_IPV4|g" \
+    -e "s|%host_ula_ipv6%|\[$HOST_ULA_IPV6\]|g" \
+    -e "s|%service_data_dir%|$SERVICE_DATA_DIR|g" \
+    "$SCRIPT_DIR/$TEMPLATE_FILENAME" > "$QUADLET_FILE_LOCATION"
+
 
   #* process more %variables% or more files here if needed
+  #! please note that you should modify the target file created in the previous step, not the template file
+  # example: sed -i "s|%variables%|$variables|" "$QUADLET_FILE_LOCATION"
   # Detect if this is first-time setup
   CONF_DIR="$SCRIPT_DIR/conf"
   WORK_DIR="$SCRIPT_DIR/work"
@@ -60,7 +92,7 @@ if [[ "$USE_TEMPLATE" = "true" ]]; then
     echo ">>> Existing configuration found — skipping setup port 3000."
     EXTRA_PUBLISH=""
   fi
-  sed -i "s|%EXTRA_PORT_PLACEHOLDER%|$EXTRA_PUBLISH|" "$SCRIPT_DIR/$TARGET_FILE"
+  sed -i "s|%EXTRA_PORT_PLACEHOLDER%|$EXTRA_PUBLISH|" "$QUADLET_FILE_LOCATION"
   #* ...
 fi
 
@@ -70,24 +102,25 @@ fi
 
 # Setup quadlet systemd
 if [[ "$ROOTLESS" = "true" ]]; then
+  if [[ "$EUID" -eq 0 ]]; then
+    echo "Error: You are running as root but ROOTLESS is set to true."
+    echo "Please run this script without 'sudo'."
+    exit 1
+  fi
   SYSTEMCTL_CMD="systemctl --user"
-  SYSTEMD_DIR="$HOME/.config/containers/systemd/"
   SUDO=""
 else
   SYSTEMCTL_CMD="sudo systemctl"
-  SYSTEMD_DIR="/etc/containers/systemd/"
   SUDO="sudo"
 fi
-echo ">>> Installing $TARGET_FILE to $SYSTEMD_DIR"
-$SUDO mkdir -p "$SYSTEMD_DIR"
-# $TO expands to nothing, just for readability
-$SUDO $INSTALL "$SCRIPT_DIR/$TARGET_FILE" $TO "$SYSTEMD_DIR/$TARGET_FILE"
+echo ">>> Installing $QUADLET_FILENAME"
+$SUDO podman quadlet install --replace "$QUADLET_FILE_LOCATION"
 
 #* Uncomment if you have .network and/or .volume files to install
-# echo ">>> Copying $SERVICE_NAME.network to $SYSTEMD_DIR"
-# $SUDO cp "$SCRIPT_DIR/$SERVICE_NAME.network" "$SYSTEMD_DIR/$SERVICE_NAME.network"
-# echo ">>> Copying $SERVICE_NAME.volume to $SYSTEMD_DIR"
-# $SUDO cp "$SCRIPT_DIR/$SERVICE_NAME.volume" "$SYSTEMD_DIR/$SERVICE_NAME.volume"
+# echo ">>> Installing $SERVICE_NAME.network"
+# $SUDO podman quadlet install "$SCRIPT_DIR/$SERVICE_NAME.network"
+# echo ">>> Installing $SERVICE_NAME.volume"
+# $SUDO podman quadlet install "$SCRIPT_DIR/$SERVICE_NAME.volume"
 
 echo ">>> Reloading systemd daemon to recognize new Quadlet"
 $SYSTEMCTL_CMD daemon-reload
