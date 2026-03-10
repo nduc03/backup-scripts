@@ -64,14 +64,6 @@
 dns.lan {
     tls /mycerts/dns.lan/hs-end-entity-ecdsa.pem.crt /mycerts/dns.lan/hs-end-entity-ecdsa.pem.key
 
-    handle /dns-query {
-        reverse_proxy host.containers.internal:8443 {
-            transport http {
-                tls_insecure_skip_verify
-            }
-        }
-    }
-
     reverse_proxy host.containers.internal:8686
 }
 
