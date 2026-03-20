@@ -1,0 +1,1 @@
+sudo docker run -d -p 8765:3000 --name wiki --restart unless-stopped -e "DB_TYPE=postgres" -e "DB_HOST=192.168.1.220" -e "DB_PORT=5432" -e "DB_USER=postgres" -e "DB_PASS=****" -e "DB_NAME=wiki" ghcr.io/requarks/wiki:latest

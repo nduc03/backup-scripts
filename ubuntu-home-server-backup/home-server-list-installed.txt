@@ -1,0 +1,28 @@
+# Default ubuntu repo
+fail2ban
+glances
+pipx
+dnsmasq
+gh
+net-tools
+podman
+python3-pip
+OpenJDK
+ffmpeg
+gpg
+cockpit
+
+# Custom repo
+filebroswer
+postgresql
+nginx
+cockpit-files
+cloudflared
+
+# from web manual
+docker
+
+# docker container
+n8n
+gitea
+redmine

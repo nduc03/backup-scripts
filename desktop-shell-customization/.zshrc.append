@@ -1,0 +1,89 @@
+# used append to .zshrc not to replace entire .zshrc
+
+plugins=(
+  git
+  docker
+  docker-compose
+  history
+  rsync
+  safe-paste
+  zsh-autosuggestions
+  zsh-syntax-highlighting
+  zsh-completions 
+)
+
+# disable auto cd
+unsetopt autocd
+
+# from .bashrc
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+[[ -f ~/.bash_aliases ]] && source ~/.bash_aliases
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+# common startup scripts
+source ~/.shrc
+
+# my custom alias
+alias update='sudo apt update && sudo apt upgrade -y'
+
+# Source cargo environment
+source "$HOME/.cargo/env"
+
+# quick launch incus container shell
+startc() {
+  local container="$1"
+  if [[ -z "$container" ]]; then
+    echo "Usage: startc <container-name>"
+    return 1
+  fi
+
+  local container_status
+  container_status=$(incus list --format csv -c ns | grep "^${container}," | cut -d',' -f2)
+
+  if [[ "$container_status" == "STOPPED" ]]; then
+    echo "Starting container $container..."
+    incus start "$container"
+  elif [[ "$container_status" == "RUNNING" ]]; then
+    echo "Container $container is already running."
+  else
+    echo "Container $container not found or unknown status: '$container_status'"
+    return 1
+  fi
+
+  incus exec "$container" -- /bin/bash
+
+  echo "Exiting container shell, stopping $container..."
+  incus stop "$container"
+}
+
+# pipx autocomplete
+autoload -U compinit && compinit
+eval "$(register-python-argcomplete pipx)"
+
+# change prompt
+function chprom() {
+    source ~/sh-script/zsh-chprom
+}
+
+# Oh My Posh Random Theme
+setopt NULL_GLOB
+POSH_THEME_DIR="$HOME/posh-theme"
+
+themes=("$POSH_THEME_DIR"/*.omp.json)
+
+# not really random (more like seed for random), but not repetitive like RANDOM with modulo bias
+# modulo bias learn more: https://research.kudelskisecurity.com/2020/07/28/the-definitive-guide-to-modulo-bias-and-how-to-avoid-it/
+my_random=$((($(date +%s%N) ^ $$) & 0x7FFF))
+
+if [ ${#themes[@]} -gt 0 ]; then
+  num_themes=${#themes[@]}
+  rand_idx=$((my_random % num_themes + 1)) # zsh uses 1-based index
+  random_theme="${themes[$rand_idx]}"
+  eval "$(oh-my-posh init zsh --config "$random_theme")"
+else
+  echo "No Oh My Posh themes found in $POSH_THEME_DIR. Using default theme." >/dev/stderr
+  eval "$(oh-my-posh init zsh)"
+fi
+# End Oh My Posh Random Theme

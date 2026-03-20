@@ -1,0 +1,12 @@
+# commands to setup dnsmasq for dns server for ubuntu
+
+sudo apt install -y dnsmasq
+sudo systemctl stop systemd-resolved
+sudo systemctl disable systemd-resolved
+sudo rm /etc/resolv.conf
+echo "nameserver 127.0.0.1" | sudo tee /etc/resolv.conf
+sudo nano /etc/dnsmasq.conf
+# check dnsmasq.conf file to know how to edit
+sudo nano /etc/default/dnsmasq
+# check default-dnsmasq.txt file to know how to edit 
+sudo systemctl restart dnsmasq

@@ -1,0 +1,179 @@
+{
+    "$help": "https://aka.ms/terminal-documentation",
+    "$schema": "https://aka.ms/terminal-profiles-schema",
+    "actions": [],
+    "copyFormatting": "none",
+    "copyOnSelect": false,
+    "defaultProfile": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
+    "keybindings": 
+    [
+        {
+            "id": "Terminal.CopyToClipboard",
+            "keys": "ctrl+c"
+        },
+        {
+            "id": "Terminal.FindText",
+            "keys": "ctrl+shift+f"
+        },
+        {
+            "id": "Terminal.PasteFromClipboard",
+            "keys": "ctrl+v"
+        },
+        {
+            "id": "Terminal.DuplicatePaneAuto",
+            "keys": "alt+shift+d"
+        }
+    ],
+    "newTabMenu": 
+    [
+        {
+            "type": "remainingProfiles"
+        }
+    ],
+    "profiles": 
+    {
+        "defaults": 
+        {
+            "backgroundImage": "desktopWallpaper",
+            "backgroundImageOpacity": 0.4
+        },
+        "list": 
+        [
+            {
+                "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+                "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
+                "hidden": false,
+                "name": "Windows PowerShell"
+            },
+            {
+                "commandline": "%SystemRoot%\\System32\\cmd.exe",
+                "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
+                "hidden": false,
+                "name": "Command Prompt"
+            },
+            {
+                "guid": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}",
+                "hidden": false,
+                "name": "Azure Cloud Shell",
+                "source": "Windows.Terminal.Azure"
+            },
+            {
+                "guid": "{2ece5bfe-50ed-5f3a-ab87-5cd4baafed2b}",
+                "hidden": false,
+                "name": "Git Bash",
+                "source": "Git"
+            },
+            {
+                "guid": "{bc648eee-783c-577a-95fb-0f4f154269d3}",
+                "hidden": false,
+                "name": "Developer Command Prompt for VS 2022",
+                "source": "Windows.Terminal.VisualStudio"
+            },
+            {
+                "guid": "{10b6be0c-4277-56c3-a824-2f247a74c2a5}",
+                "hidden": false,
+                "name": "Developer PowerShell for VS 2022",
+                "source": "Windows.Terminal.VisualStudio"
+            },
+            {
+                "commandline": "%WINDIR%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -ExecutionPolicy ByPass -NoExit -Command \"& 'C:\\Users\\nduc0\\miniconda3\\shell\\condabin\\conda-hook.ps1' ; conda activate 'C:\\Users\\nduc0\\miniconda3' \"",
+                "guid": "{baef6041-a2f3-5472-b295-a7d7fb0ed62f}",
+                "icon": "C:\\Users\\nduc0\\miniconda3\\Menu\\anaconda_powershell_prompt.ico",
+                "name": "Anaconda PowerShell Prompt (miniconda3)",
+                "startingDirectory": "C:\\Users\\nduc0"
+            },
+            {
+                "commandline": "%WINDIR%\\System32\\cmd.exe \"/K\" C:\\Users\\nduc0\\miniconda3\\Scripts\\activate.bat C:\\Users\\nduc0\\miniconda3",
+                "guid": "{35427e1d-45ad-517a-8692-8d5e4093f90f}",
+                "icon": "C:\\Users\\nduc0\\miniconda3\\Menu\\anaconda_prompt.ico",
+                "name": "Anaconda Prompt (miniconda3)",
+                "startingDirectory": "C:\\Users\\nduc0"
+            },
+            {
+                "guid": "{84fc0380-f300-5376-a94a-72bb4f15678c}",
+                "hidden": false,
+                "name": "Ubuntu",
+                "source": "Microsoft.WSL"
+            },
+            {
+                "guid": "{8ab8e6f6-35c6-5b46-8419-3e1568105476}",
+                "hidden": true,
+                "name": "podman-machine-default",
+                "source": "Windows.Terminal.Wsl"
+            },
+            {
+                "guid": "{46ca431a-3a87-5fb3-83cd-11ececc031d2}",
+                "hidden": true,
+                "name": "kali-linux",
+                "source": "Windows.Terminal.Wsl"
+            },
+            {
+                "altGrAliasing": true,
+                "antialiasingMode": "grayscale",
+                "closeOnExit": "automatic",
+                "colorScheme": "Campbell",
+                "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+                "cursorShape": "bar",
+                "elevate": true,
+                "font": 
+                {
+                    "face": "Cascadia Mono",
+                    "size": 12
+                },
+                "guid": "{577a2f68-5344-490b-9575-c3e0425ede6c}",
+                "hidden": false,
+                "historySize": 9001,
+                "icon": "ms-appx:///ProfileIcons/{61c54bbd-c2c6-5271-96e7-009a87ff44bf}.png",
+                "name": "Windows PowerShell (Admin)",
+                "padding": "8, 8, 8, 8",
+                "snapOnInput": true,
+                "startingDirectory": "%USERPROFILE%",
+                "useAcrylic": false
+            },
+            {
+                "altGrAliasing": true,
+                "antialiasingMode": "grayscale",
+                "closeOnExit": "automatic",
+                "colorScheme": "Campbell",
+                "commandline": "%SystemRoot%\\System32\\cmd.exe",
+                "cursorShape": "bar",
+                "elevate": true,
+                "font": 
+                {
+                    "face": "Cascadia Mono",
+                    "size": 12
+                },
+                "guid": "{49aa7902-fa2f-4e87-a3a8-7c93415cbd07}",
+                "hidden": false,
+                "historySize": 9001,
+                "icon": "ms-appx:///ProfileIcons/{0caa0dad-35be-5f56-a8ff-afceeeaa6101}.png",
+                "name": "Command Prompt (Admin)",
+                "padding": "8, 8, 8, 8",
+                "snapOnInput": true,
+                "startingDirectory": "%USERPROFILE%",
+                "useAcrylic": false
+            },
+            {
+                "commandline": "ssh nduc@192.168.1.220",
+                "guid": "{0e01ed1c-9a0e-405b-9d77-c194f710bc8c}",
+                "hidden": false,
+                "name": "Homeserver SSH"
+            },
+            {
+                "commandline": "\"C:\\Program Files\\PostgreSQL\\17\\scripts\\runpsql.bat\"",
+                "guid": "{f1d03c87-e8ba-4af2-b2a3-1a3b456258ed}",
+                "hidden": false,
+                "name": "psql"
+            },
+            {
+                "commandline": "cmd /k \"C:\\Users\\nduc0\\AppData\\Local\\Programs\\android_sdk\\android-dev.bat\"",
+                "guid": "{702e2120-3add-42b5-a1ac-952201fa4711}",
+                "hidden": false,
+                "name": "Android Dev",
+                "startingDirectory": "%USERPROFILE%"
+            }
+        ]
+    },
+    "schemes": [],
+    "themes": []
+}

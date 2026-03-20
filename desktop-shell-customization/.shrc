@@ -1,0 +1,38 @@
+# should be placed in ~/.shrc
+
+export PATH="$HOME/.local/bin:\
+$HOME/go/bin:\
+$HOME/.dotnet/tools:\
+$HOME/android_sdkmanager/emulator:\
+$HOME/android_sdkmanager/platform-tools:\
+$HOME/android_sdkmanager/cmdline-tools/latest/bin:\
+$HOME/bgm-player.py/bin:\
+/usr/local/go/bin:\
+$PATH"
+
+# Incus build variables
+export CGO_CFLAGS="-I/home/nduc/go/deps/raft/include/ -I/home/nduc/go/deps/cowsql/include/"
+export CGO_LDFLAGS="-L/home/nduc/go/deps/raft/.libs -L/home/nduc/go/deps/cowsql/.libs/"
+export LD_LIBRARY_PATH="/home/nduc/go/deps/raft/.libs/:/home/nduc/go/deps/cowsql/.libs/"
+export CGO_LDFLAGS_ALLOW="(-Wl,-wrap,pthread_create)|(-Wl,-z,now)"
+# Incus variables
+export LD_LIBRARY_PATH="$(go env GOPATH)/deps/cowsql/.libs/:$(go env GOPATH)/deps/raft/.libs/:${LD_LIBRARY_PATH}"
+
+# let vscode always use wayland
+alias code='ELECTRON_OZONE_PLATFORM_HINT=wayland code'
+alias hs='ssh nduc@192.168.1.220'
+# package install shortcut
+pkgin() {
+  if [ "$#" -eq 0 ]; then
+    echo "Shortcut for apt install or dnf install.\nUsage: pkgin <package-name> ..."
+    return 1
+  fi
+  if command -v apt >/dev/null 2>&1; then
+    sudo apt install "$@"
+  elif command -v dnf >/dev/null 2>&1; then
+    sudo dnf install "$@"
+  else
+    echo "No supported package manager found (apt or dnf)." >&2
+    return 1
+  fi
+}

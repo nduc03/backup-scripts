@@ -1,0 +1,4 @@
+UUID=$(uuidgen)
+gnome-screenshot -a -f /tmp/"$UUID"
+tesseract /tmp/"$UUID" stdout | wl-copy
+notify-send "Text from the selected area has been copied to the clipboard!"

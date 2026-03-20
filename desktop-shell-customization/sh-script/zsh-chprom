@@ -1,0 +1,17 @@
+#!/bin/zsh
+
+# Prompt user for the username part
+read "user_part?Enter the username part for the prompt: "
+
+# Prompt user for the path part
+read "path_part?Enter the path part for the prompt: "
+
+# Check if the current user is root
+if [[ "$(whoami)" == "root" ]]; then
+    prompt_symbol="#"
+else
+    prompt_symbol="$"
+fi
+
+# Construct the temporary PS1 string
+export PS1="%F{green}${user_part}%f:%F{45}${path_part}%f${prompt_symbol} "
