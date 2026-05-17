@@ -35,7 +35,7 @@ Hướng dẫn này giúp bạn cấu hình Check Point Endpoint Security VPN ch
 ## 2. Cấu hình bật Check Point theo nhu cầu (On-Demand)
 
 * **Bước 5:** Tắt service TracSrvWrapper tự động chạy khi boot máy:
-    - Bạn có thể dùng GUI bằng app Services tìm đến "Check Point Endpoint Security VPN" rồi vào properties rồi chỉnh Startup type thành Manual.
+    - Bạn có thể dùng GUI bằng cách dùng Windows search tìm app Services, mở app rồi tìm đến "Check Point Endpoint Security VPN" rồi chuột phải > properties > Startup type > chọn Manual.
 
     - Hoăc nếu bạn thích dòng lệnh thì mở **Command Prompt (Admin)** và chạy:
 
@@ -53,6 +53,7 @@ Hướng dẫn này giúp bạn cấu hình Check Point Endpoint Security VPN ch
     4. Sau khi tạo xong, click chuột phải vào file shortcut vừa tạo -> **Properties** -> **Advanced** -> Tích chọn **Run as administrator** -> **OK**.
 
 
-> ⚠️ **LƯU Ý QUAN TRỌNG**
-> * Thủ thuật này hoạt động bằng cách vô hiệu hóa hoàn toàn watchdog `EPWD`. Hiện tại đã test thành công tại các doanh nghiệp không áp dụng policy kiểm tra tính toàn vẹn của phần mềm (End-point Compliance Policy Monitor).
-> * Cách này **không đảm bảo 100%** sẽ hoạt động với mọi môi trường corporate enterprise nếu hệ thống của công ty bạn có cơ chế quét driver ngầm và ép bật lại `EPWD`.
+>  **LƯU Ý**
+> * Thủ thuật này hoạt động bằng cách vô hiệu hóa hoàn toàn watchdog `EPWD`. Hiện tại đã test thành công tại cty không đặt policy gì.
+> * Cách này **không đảm bảo 100%** sẽ hoạt động với mọi môi trường công ty.
+> * Thủ thuật có sự hỗ trợ của Gemini Pro 3.1 trong việc tìm ra công cụ Windows để điều tra nguyên nhân WSL2 bị lỗi và viết file md và Claude Sonnet 4.6 trong việc phân tích log và fix lỗi.
