@@ -1,4 +1,4 @@
-# Tip & Trick: Cài đặt Check Point VPN không xung đột với WSL2 Network (On-Demand)
+# Tip & Trick: Cài đặt Check Point VPN không xung đột với WSL2 Network
 
 Hướng dẫn này giúp bạn cấu hình Check Point Endpoint Security VPN chỉ khởi động khi cần thiết, ngăn chặn driver firewall của nó (`vsdatant`) can thiệp và làm hỏng hệ thống mạng của WSL2 khi bạn không dùng VPN.
 
@@ -52,8 +52,20 @@ Hướng dẫn này giúp bạn cấu hình Check Point Endpoint Security VPN ch
     3. Đặt tên cho Shortcut (ví dụ: `Bật Check Point VPN`).
     4. Sau khi tạo xong, click chuột phải vào file shortcut vừa tạo -> **Properties** -> **Advanced** -> Tích chọn **Run as administrator** -> **OK**.
 
+## 3. Tip bổ sung cho cty yzLkTBGpakUk9NnqbFqUVsnreJU0DyeVsQ== hoặc nơi mà hay phải xóa đi kết nối lại
+
+Tạo script ps1:
+```pwsh
+$SITE = "***"
+
+Set-Location "C:\Program Files (x86)\CheckPoint\Endpoint Connect"
+
+.\trac.exe disconnect
+.\trac.exe delete -s $SITE
+.\trac.exe create -s $SITE -a username-password
+.\trac.exe connect -s $SITE -u "***" -p "***"
+```
 
 >  **LƯU Ý**
-> * Thủ thuật này hoạt động bằng cách vô hiệu hóa hoàn toàn watchdog `EPWD`. Hiện tại đã test thành công tại cty không đặt policy gì.
-> * Cách này **không đảm bảo 100%** sẽ hoạt động với mọi môi trường công ty.
+> * Thủ thuật này hoạt động bằng cách vô hiệu hóa hoàn toàn watchdog `EPWD`.
 > * Thủ thuật có sự hỗ trợ của Gemini Pro 3.1 trong việc tìm ra công cụ Windows để điều tra nguyên nhân WSL2 bị lỗi và viết file md và Claude Sonnet 4.6 trong việc phân tích log và fix lỗi.
