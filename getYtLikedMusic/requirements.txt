@@ -1,0 +1,3 @@
+chompjs
+google-genai
+pydantic
