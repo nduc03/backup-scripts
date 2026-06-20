@@ -66,6 +66,8 @@ Set-Location "C:\Program Files (x86)\CheckPoint\Endpoint Connect"
 .\trac.exe connect -s $SITE -u "***" -p "***"
 ```
 
+---
+
 >  **LƯU Ý**
 > * Thủ thuật này hoạt động bằng cách vô hiệu hóa hoàn toàn watchdog `EPWD`.
 > * Thủ thuật có sự hỗ trợ của Gemini Pro 3.1 trong việc tìm ra công cụ Windows để điều tra nguyên nhân WSL2 bị lỗi và viết file md và Claude Sonnet 4.6 trong việc phân tích log và fix lỗi.

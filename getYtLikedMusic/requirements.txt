@@ -1,3 +1,5 @@
 chompjs
 google-genai
 pydantic
+playwright
+google-api-python-client
