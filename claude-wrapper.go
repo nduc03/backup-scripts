@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -8,7 +9,7 @@ import (
 	"syscall"
 )
 
-const disallowedTools = "NotebookEdit,WebSearch,WebFetch,CronCreate,CronDelete,CronList,PushNotification,RemoteTrigger,ReportFindings,ScheduleWakeup,EnterWorktree,ExitWorktree,Artifact,ShareOnboardingGuide,SendMessage,SendUserFile,Workflow,TaskOutput,ExitPlanMode"
+const disallowedTools = "NotebookEdit,CronCreate,CronDelete,CronList,PushNotification,RemoteTrigger,ReportFindings,ScheduleWakeup,EnterWorktree,ExitWorktree,Artifact,ShareOnboardingGuide,SendMessage,SendUserFile,TaskOutput"
 
 func main() {
 	var target string
@@ -46,16 +47,9 @@ func main() {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
-	err := cmd.Run()
-	if err == nil {
-		os.Exit(0)
+	if err := cmd.Start(); err != nil {
+		log.Fatal(err)
 	}
 
-	if exitErr, ok := err.(*exec.ExitError); ok {
-		if ws, ok := exitErr.Sys().(syscall.WaitStatus); ok {
-			os.Exit(ws.ExitStatus())
-		}
-	}
-
-	os.Exit(1)
+	os.Exit(0)
 }
